@@ -7,6 +7,11 @@ class StaticPagesControllerTest < ActionDispatch::IntegrationTest
     @base_title = "Ruby on Rails Tutorial Sample App"
   end
   
+  test "should get root" do
+    get root_url
+    assert_response :success
+  end
+  
   test "should get home" do
     # Homeページのテスト。GETリクエストをhomeアクションに対して発行（=送信）せよ。そうすれば、リクエストに対するレスポンスは［成功］になるはず
     get static_pages_home_url
