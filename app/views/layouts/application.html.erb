@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>SampleApp</title>
+    <title><%= yield(:title) %> | Ruby on Rails Tutorial Sample App</title>
+    
+    <!-- CSRF攻撃を阻止するためのコード -->
     <%= csrf_meta_tags %>
+    
+    <!-- クロスサイトスクリプティング攻撃を阻止するためのコード -->
     <%= csp_meta_tag %>
 
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
