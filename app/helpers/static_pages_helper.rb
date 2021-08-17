@@ -1,3 +1,4 @@
+
 module ApplicationHelper
 
   # ページごとの完全なタイトルを返します。
@@ -9,4 +10,5 @@ module ApplicationHelper
       page_title + " | " + base_title
     end
   end
+  
 end

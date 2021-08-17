@@ -2,17 +2,15 @@
 <html>
   <head>
     <title><%= full_title(yield(:title)) %></title>
-    
     <!-- CSRF攻撃を阻止するためのコード -->
     <%= csrf_meta_tags %>
-    
     <!-- クロスサイトスクリプティング攻撃を阻止するためのコード -->
     <%= csp_meta_tag %>
-
-    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <%= stylesheet_link_tag    'application', media: 'all',
+                               'data-turbolinks-track': 'reload' %>
+    <%= javascript_pack_tag 'application',
+                               'data-turbolinks-track': 'reload' %>
   </head>
-
   <body>
     <%= yield %>
   </body>
