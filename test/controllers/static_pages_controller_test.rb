@@ -1,6 +1,5 @@
 require 'test_helper'
 
-# アクションをgetして正常に動作することを確認しているテスト
 class StaticPagesControllerTest < ActionDispatch::IntegrationTest
   
   test "should get home" do
