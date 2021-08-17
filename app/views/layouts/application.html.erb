@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= full_title(yield(:title)) %></title>
-    <!-- CSRF攻撃を阻止するためのコード -->
-    <%= csrf_meta_tags %>
-    <!-- クロスサイトスクリプティング攻撃を阻止するためのコード -->
-    <%= csp_meta_tag %>
-    <%= stylesheet_link_tag    'application', media: 'all',
-                               'data-turbolinks-track': 'reload' %>
-    <%= javascript_pack_tag 'application',
-                               'data-turbolinks-track': 'reload' %>
+    <%= render 'layouts/rails_default' %>
+    <!-- layoutから_shimファイルを探し出して表示 -->
+    <%= render 'layouts/shim' %>
   </head>
   <body>
-    <%= yield %>
-  </body>
+    
+    <!--layoutから_headerファイルを探し出して表示-->
+    <%= render 'layouts/header' %>
+    
+    <div class="container">
+      <%= yield %>
+      <%= render 'layouts/footer' %>
+    </div>
+    
+</body>
+  
 </html>
