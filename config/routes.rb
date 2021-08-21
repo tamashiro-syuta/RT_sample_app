@@ -9,4 +9,7 @@ Rails.application.routes.draw do
   
   # デフォルトの　users_new_url　を　signup_path　に修正
   get '/signup', to: 'users#new'
+  
+  # /users/1 のURLを有効にするため
+  resources :users
 end
