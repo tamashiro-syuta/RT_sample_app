@@ -13,6 +13,12 @@ class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
   fixtures :all
   
+  # テストユーザーがログイン中の場合にtrueを返す
+  # current_userメソッドは、テストコードから呼び出せないので独自に関数を定義
+  def is_logged_in?
+    !session[:user_id].nil?
+  end
+  
   # test環境でもApplicationヘルパーを使えるようにする(class部分にTestCaseと記載されている)
   include ApplicationHelper
 

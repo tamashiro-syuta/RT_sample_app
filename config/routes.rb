@@ -12,4 +12,9 @@ Rails.application.routes.draw do
   
   # /users/1 のURLを有効にするため
   resources :users
+  
+  # ログイン時のセッション用
+  get    '/login',   to: 'sessions#new'
+  post   '/login',   to: 'sessions#create'
+  delete '/logout',  to: 'sessions#destroy'
 end
