@@ -4,14 +4,16 @@ class SessionsController < ApplicationController
   end
   
   def create
-    user = User.find_by(email: params[:session][:email].downcase)
+    @user = User.find_by(email: params[:session][:email].downcase)
     
     # ユーザーがデータベースにあり、かつ(&&)、認証に成功した場合にのみ
     # 下は 「if user && user.authenticate(params[:session][:password])」と等価
-    if user&.authenticate(params[:session][:password])
+    if @user && @user.authenticate(params[:session][:password])
       # ユーザーログイン後にユーザー情報のページにリダイレクトする
-      log_in user
-      redirect_to user #user_url(user)と一緒
+      log_in @user
+      # paramsによって送られてきたチェックボックスの結果によってrememberにするかforgetにするか判定
+      params[:session][:remember_me] == '1' ? remember(@user) : forget(@user)
+      redirect_to @user #user_url(user)と一緒
     else
       # エラーメッセージを作成する
       flash.now[:danger] = 'Invalid email/password combination'
@@ -20,7 +22,9 @@ class SessionsController < ApplicationController
   end
   
   def destroy
-    log_out
+    #複数のブラウザで開いてた場合に起きる二重にログアウトできてしまうエラーを防ぐため
+    #ログイン中にしかログアウトできなくする
+    log_out if logged_in?
     redirect_to root_url
   end
   

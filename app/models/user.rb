@@ -1,4 +1,7 @@
 class User < ApplicationRecord
+  # ここで仮想の属性としてremenber_tokenを作成
+  attr_accessor :remember_token
+  
   # DBに保存する前に全て小文字にする
   before_save { email.downcase! }
   validates :name, presence: true, length: { maximum: 50}
@@ -12,11 +15,43 @@ class User < ApplicationRecord
   has_secure_password
   validates :password, presence: true, length: { minimum: 6 }
   
-  # 渡された文字列のハッシュ値を返す
-  def User.digest(string)
-    cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST :
-                                                  BCrypt::Engine.cost
-    BCrypt::Password.create(string, cost: cost)
+  # こうすることでメソッドを以下のように示すことができる
+  class << self
+  
+    # 渡された文字列のハッシュ値を返す
+    def digest(string)
+      cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST :
+                                                    BCrypt::Engine.cost
+      BCrypt::Password.create(string, cost: cost)
+    end
+  
+    # ランダムなトークンを返す
+    def new_token
+      SecureRandom.urlsafe_base64
+    end
+  
+  end
+  
+  # 永続セッションのためにユーザーをデータベースに記憶する
+  def remember
+   # 1行目で作成した仮想の属性にランダムなトークンを指定
+    self.remember_token = User.new_token
+    # それをハッシュ値のして、remenber_digestに保存
+    update_attribute(:remember_digest, User.digest(remember_token) )
+  end
+  
+  # 渡されたトークンがダイジェストと一致したらtrueを返す
+  def authenticated?(remember_token)
+    # 複数のブラウザで開いている時、片方をログアウト、片方をログアウトせずにタブを閉じると
+    # クッキーがないのに、ログアウト処理でこのメソッドの呼び出しが可能になる（この時、クッキーがないのでremember_digestは空）
+    # 空文字を引数に取るとBCryptの方でエラーが起きるため、対策としてremember_digestが空の時はfalseを返すようにする
+    return false if remember_digest.nil?
+    BCrypt::Password.new(remember_digest).is_password?(remember_token)
+  end
+  
+  # ユーザーのログイン情報を破棄する
+  def forget
+    update_attribute(:remember_digest, nil)
   end
   
 end

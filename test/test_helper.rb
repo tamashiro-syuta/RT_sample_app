@@ -19,8 +19,25 @@ class ActiveSupport::TestCase
     !session[:user_id].nil?
   end
   
+  # テストユーザーとしてログインする
+  # (上下の同名のメソッドで、単体テストでも統合テストでも違いを意識する必要なく、テストできる)
+  def log_in_as(user)
+    session[:user_id] = user.id
+  end
+  
   # test環境でもApplicationヘルパーを使えるようにする(class部分にTestCaseと記載されている)
   include ApplicationHelper
 
   # Add more helper methods to be used by all tests here...
+end
+
+class ActionDispatch::IntegrationTest
+
+  # テストユーザーとしてログインする
+  # (上下の同名のメソッドで、単体テストでも統合テストでも違いを意識する必要なく、テストできる)
+  def log_in_as(user, password: 'password', remember_me: '1')
+    post login_path, params: { session: { email: user.email,
+                                          password: password,
+                                          remember_me: remember_me } }
+  end
 end
