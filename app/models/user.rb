@@ -13,7 +13,9 @@ class User < ApplicationRecord
                     format: { with: VALID_EMAIL_REGEX }, uniqueness: true
                       
   has_secure_password
-  validates :password, presence: true, length: { minimum: 6 }
+  # has_secure_passwordでは生成時に存在性を検証するようになっているため
+  # 空のパスワード（nil）が新規ユーザー登録時に有効になることはない。
+  validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
   
   # こうすることでメソッドを以下のように示すことができる
   class << self

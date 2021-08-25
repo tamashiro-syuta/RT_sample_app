@@ -1,4 +1,15 @@
 class UsersController < ApplicationController
+  # edit,updateに行く前には必ずlogged_in_userが実行済みでないといけない
+  # only:[ ] がないと全てのアクションに適用される
+  before_action :logged_in_user, only: [:index, :edit, :update, :destroy]
+  before_action :correct_user,   only: [:edit, :update]
+  # destroyの前にadmin_userをすることで、コマンドで直接DLETEを送ることができないようにする
+  before_action :admin_user,     only: :destroy
+  
+  def index
+    # params[:page] の値は、will_paginateで自動生成される
+    @users = User.paginate(page: params[:page])
+  end
   
   def show
     @user = User.find(params[:id])
@@ -11,15 +22,38 @@ class UsersController < ApplicationController
   end
   
   def create
-    @user = User.new(user_params)    # 実装は終わっていないことに注意!
+    @user = User.new(user_params)  
     if @user.save
       log_in @user
       flash[:success] = "Welcome to the Sample App!"
       # 保存の成功をここで扱う。
-       redirect_to @user # redirect_to user_url(@user) と同じ
+      redirect_to @user
     else
       render 'new'
     end
+  end
+
+  
+  def edit
+    @user = User.find(params[:id])
+  end
+  
+  def update
+    @user = User.find(params[:id])
+    if @user.update(user_params)
+      #更新成功
+      flash[:success] = "Profile updated"
+      redirect_to @user
+    else
+      #更新失敗
+      render 'edit'
+    end
+  end
+  
+  def destroy
+    User.find(params[:id]).destroy
+    flash[:success] = "User deleted"
+    redirect_to users_url
   end
   
   #この記述をすることで、それ以下の記述が(user_paramsなど)外部で使えないようになる
@@ -29,6 +63,28 @@ class UsersController < ApplicationController
     def user_params
       params.require(:user).permit(:name, :email, :password,
                                    :password_confirmation)
+    end
+    
+    # beforeアクション
+
+    # ログイン済みユーザーかどうか確認
+    def logged_in_user
+      unless logged_in?
+        store_location
+        flash[:danger] = "Please log in."
+        redirect_to login_url
+      end
+    end
+    
+    # 正しいユーザーが判別
+    def correct_user
+      @user = User.find(params[:id])
+      redirect_to(root_url) unless current_user?(@user)
+    end
+    
+    # 管理者かどうか確認
+    def admin_user
+      redirect_to(root_url) unless current_user.admin?
     end
   
 end
