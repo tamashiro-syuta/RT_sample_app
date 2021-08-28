@@ -1,6 +1,11 @@
 require 'test_helper'
 
 class UsersSignupTest < ActionDispatch::IntegrationTest
+  
+  def setup
+    # 平行してテストが行われた際、データが混同しないようにリセットしている
+    ActionMailer::Base.deliveries.clear
+  end
 
   test "invalid signup information" do
     # signup_pathにアクセス
@@ -21,7 +26,7 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
   end
   
   # 有効なユーザー登録に対するテスト
-  test "valid signup information" do
+  test "valid signup information with account activation" do
     get signup_path
     # テスト前とテスト後のユーザー数の差が１
     assert_difference 'User.count', 1 do
@@ -31,6 +36,23 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
                                          password_confirmation: "password" } }
     end
     
+    # 配信されたメッセージがきっかり1つであるか確認
+    assert_equal 1, ActionMailer::Base.deliveries.size
+    # assignsメソッドで、インスタンス変数をテスト内でも使用することができる
+    user = assigns(:user)
+    assert_not user.activated?
+    # 有効化していない状態でログインしてみる
+    log_in_as(user)
+    assert_not is_logged_in?
+    # 有効化トークンが不正な場合
+    get edit_account_activation_path("invalid token", email: user.email)
+    assert_not is_logged_in?
+    # トークンは正しいがメールアドレスが無効な場合
+    get edit_account_activation_path(user.activation_token, email: 'wrong')
+    assert_not is_logged_in?
+    # 有効化トークンが正しい場合
+    get edit_account_activation_path(user.activation_token, email: user.email)
+    assert user.reload.activated?
     # POSTリクエストを送信した結果を見て、指定されたリダイレクト先に移動するメソッド
     follow_redirect!
     assert_template 'users/show'

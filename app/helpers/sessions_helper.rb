@@ -24,7 +24,7 @@ module SessionsHelper
       #そのcookieに該当するユーザーを変数に入れる
       user = User.find_by(id: user_id)
       #上で変数化したユーザーが存在して、かつそのユーザーのトークンがダイジェストと一致したら
-      if user && user.authenticated?(cookies[:remember_token])
+      if user && user.authenticated?(:remember, cookies[:remember_token])
         log_in user
         #ログインして@current_userに返す
         @current_user = user

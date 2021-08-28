@@ -8,6 +8,7 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
   # fixtureのusers.ymlのテスト用サンプルデータをインスタンス変数化
   def setup
     @user = users(:michael)
+    @non_active = users(:inactive)
   end
   
   # 無効な情報でログイン
@@ -78,6 +79,11 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     # cookieを削除してログイン
     log_in_as(@user, remember_me: '0')
     assert_empty cookies[:remember_token]
+  end
+  
+  test "login as non-activated user" do
+    log_in_as(@non_active)
+    assert_redirected_to root_url
   end
   
 end

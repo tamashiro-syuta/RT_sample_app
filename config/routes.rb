@@ -13,6 +13,9 @@ Rails.application.routes.draw do
   # /users/1 のURLを有効にするため
   resources :users
   
+  # AccountActivationsを名前付きルートで扱えるように
+  resources :account_activations, only: [:edit]
+  
   # ログイン時のセッション用
   get    '/login',   to: 'sessions#new'
   post   '/login',   to: 'sessions#create'
