@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
   
+  get 'password_resets/new'
+  get 'password_resets/edit'
   root 'static_pages#home'
   
   # 名前付きルートの設定
@@ -15,6 +17,9 @@ Rails.application.routes.draw do
   
   # AccountActivationsを名前付きルートで扱えるように
   resources :account_activations, only: [:edit]
+  
+  # パスワードの再設定用
+  resources :password_resets,     only: [:new, :create, :edit, :update]
   
   # ログイン時のセッション用
   get    '/login',   to: 'sessions#new'
