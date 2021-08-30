@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  has_many :microposts, dependent: :destroy
   # 仮想属性としてremenber_tokenなどを作成
   attr_accessor :remember_token, :activation_token, :reset_token
   # DBに保存する前に全て小文字にする
@@ -88,6 +89,14 @@ class User < ApplicationRecord
   # パスワード再設定の期限が切れている場合はtrueを返す
   def password_reset_expired?
     reset_sent_at < 2.hours.ago
+  end
+  
+  # 試作feedの定義
+  # 完全な実装は次章の「ユーザーをフォローする」を参照
+  def feed
+    # 疑問符があることで、SQLクエリに代入する前にidがエスケープされるため
+    # SQLインジェクション（SQL Injection）呼ばれる深刻なセキュリティホールを避けることができます
+    Micropost.where("user_id = ?", id)
   end
   
   private 

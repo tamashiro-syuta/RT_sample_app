@@ -2,6 +2,10 @@ source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 gem 'rails',      '6.0.3'
+gem 'aws-sdk-s3',              '1.46.0', require: false # 本番環境での画像アップロード用
+gem 'image_processing',           '1.9.3' # 画像処理用のgemを追加
+gem 'mini_magick',                '4.9.5' # 画像処理用のgemを追加
+gem 'active_storage_validations', '0.8.2' # 画像アップロードに対するバリデーションをかけるため
 gem 'bcrypt',     '3.1.13' # ハッシュ化されたパスワードを使うため
 gem 'faker',      '2.1.2' # サンプルで使用するユーザーを増やすため
 gem 'will_paginate','3.1.8' # ページネーション機能のため

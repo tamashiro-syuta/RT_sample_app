@@ -21,6 +21,8 @@ Rails.application.routes.draw do
   # パスワードの再設定用
   resources :password_resets,     only: [:new, :create, :edit, :update]
   
+  resources :microposts,          only: [:create, :destroy]
+  
   # ログイン時のセッション用
   get    '/login',   to: 'sessions#new'
   post   '/login',   to: 'sessions#create'
