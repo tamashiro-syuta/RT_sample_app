@@ -23,8 +23,19 @@ Rails.application.routes.draw do
   
   resources :microposts,          only: [:create, :destroy]
   
+  resources :relationships,       only: [:create, :destroy]
+  
   # ログイン時のセッション用
   get    '/login',   to: 'sessions#new'
   post   '/login',   to: 'sessions#create'
   delete '/logout',  to: 'sessions#destroy'
+  
+  # フォロー機能
+  # /users/1/following や /users/1/followers のようになる
+  resources :users do
+    member do
+      get :following, :followers
+    end
+  end
+  
 end
